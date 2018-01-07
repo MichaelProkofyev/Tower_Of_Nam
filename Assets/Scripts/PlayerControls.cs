@@ -70,7 +70,8 @@ public class PlayerControls : MonoBehaviour {
             }
             else
             {
-                transitionProgress += Time.deltaTime * 10f;
+                float wholeTravelDistance = Vector3.Distance(currentNode.transform.position, targetNode.transform.position);
+                transitionProgress += Time.deltaTime * 5f / wholeTravelDistance;
                 transform.position = Vector3.Slerp(transform.position, targetNode.transform.position, transitionProgress);
             }
         }
