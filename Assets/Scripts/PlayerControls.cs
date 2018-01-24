@@ -10,7 +10,14 @@ public class PlayerControls : MonoBehaviour {
     public Node currentNode;
     public Node targetNode;
 
+    public Camera cam;
+    public Material girlMat;
+
+
     float transitionProgress = 0f;
+    private float shakeDuration = .1f;
+    private CameraShake camShakeController;
+    private CameraFade fadeController;
 
 	// Use this for initialization
 	void Start () {
@@ -18,11 +25,29 @@ public class PlayerControls : MonoBehaviour {
         {
             transform.position = currentNode.transform.position;
         }
-	}
+        camShakeController = GetComponent<CameraShake>();
+        fadeController = GetComponent<CameraFade>();
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        //Material properties update
+
+        girlMat.SetVector("_PullPoint", transform.position);
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            fadeController.FadeIn();
+
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            fadeController.FadeOut();
+        }
+
+
+
         if (!moving)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -31,7 +56,9 @@ public class PlayerControls : MonoBehaviour {
                 {
                     targetNode = currentNode.forward;
                     moving = true;
+                    AudioController.Instance.PlayStepEffect();
                 }
+                else camShakeController.shakeDuration = shakeDuration;
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
@@ -39,7 +66,9 @@ public class PlayerControls : MonoBehaviour {
                 {
                     targetNode = currentNode.back;
                     moving = true;
+                    AudioController.Instance.PlayStepEffect();
                 }
+                else camShakeController.shakeDuration = shakeDuration;
             }
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
@@ -47,7 +76,9 @@ public class PlayerControls : MonoBehaviour {
                 {
                     targetNode = currentNode.left;
                     moving = true;
+                    AudioController.Instance.PlayStepEffect();
                 }
+                else camShakeController.shakeDuration = shakeDuration;
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -55,7 +86,9 @@ public class PlayerControls : MonoBehaviour {
                 {
                     targetNode = currentNode.right;
                     moving = true;
+                    AudioController.Instance.PlayStepEffect();
                 }
+                else camShakeController.shakeDuration = shakeDuration;
             }
         }
         else
@@ -67,17 +100,25 @@ public class PlayerControls : MonoBehaviour {
                 transitionProgress = 0f;
                 transform.position = targetNode.transform.position;
                 currentNode = targetNode;
+                RenderSettings.fogDensity = 0.002f;
+                if (currentNode.action != null)
+                {
+                    currentNode.action();
+                }
             }
             else
             {
                 float wholeTravelDistance = Vector3.Distance(currentNode.transform.position, targetNode.transform.position);
-                transitionProgress += Time.deltaTime * 5f / wholeTravelDistance;
+                transitionProgress += Time.deltaTime * 5f / Mathf.Clamp(wholeTravelDistance, 1, 10);
                 transform.position = Vector3.Slerp(transform.position, targetNode.transform.position, transitionProgress);
+
+                //Fog update on transition
+                float trueProgress = (wholeTravelDistance - Vector3.Distance(transform.position, targetNode.transform.position)) / wholeTravelDistance;
+                RenderSettings.fogDensity = 0.002f + .02f * Mathf.Sin(trueProgress * Mathf.PI);
             }
         }
 
 
-        Vector3 lookAt = new Vector3(houseOrigin.position.x, transform.position.y, houseOrigin.position.z);
-        transform.LookAt(lookAt);
+            cam.transform.LookAt(houseOrigin);
     }
 }

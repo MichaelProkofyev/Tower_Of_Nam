@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodesController : MonoBehaviour {
 
-    Color oneWayColor = new Color(1f, 95f/255f, 95f/255f);
+    Color oneWayColor = Color.blue; //new Color(1f, 95f/255f, 95f/255f);
 
 	// Use this for initialization
 	void Start () {
@@ -21,8 +21,8 @@ public class NodesController : MonoBehaviour {
         var nodes = FindObjectsOfType<Node>();
         foreach (var node in nodes)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawCube(node.transform.position, new Vector3(.1f, .1f, .1f));
+            Gizmos.color = Color.white;
+            Gizmos.DrawCube(node.transform.position, new Vector3(1f, 1f, 1f));
             if (node.forward != null)
             {
                 Gizmos.color = node.forward.back != null ? Color.red : oneWayColor;

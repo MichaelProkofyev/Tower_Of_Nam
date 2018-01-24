@@ -10,6 +10,7 @@ public class Mother : MonoBehaviour {
     NavMeshAgent navAgent;
     public State state;
     public Transform playerT;
+    public Transform[] partrolPoints;
 
     private float patrolSpeed = 4f;
     private float huntSpeed = 20f;
@@ -44,7 +45,7 @@ public class Mother : MonoBehaviour {
                     }
                     else
                     {
-                        navAgent.destination = patrolRange * Random.insideUnitCircle;
+                        navAgent.destination = partrolPoints[Random.Range(0, partrolPoints.Length - 1)].position; // patrolRange * Random.insideUnitCircle;
                     }
                 }
                 break;

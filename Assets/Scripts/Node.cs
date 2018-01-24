@@ -8,4 +8,8 @@ public class Node : MonoBehaviour {
     public Node back;
     public Node left;
     public Node right;
+
+    public bool lookAtY = true;
+
+    public UnityEngine.Events.UnityAction action;
 }
