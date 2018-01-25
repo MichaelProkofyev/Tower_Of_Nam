@@ -15,6 +15,7 @@ public class PlayerControls : MonoBehaviour {
 
 
     float transitionProgress = 0f;
+    float trueProgress;
     private float shakeDuration = .1f;
     private CameraShake camShakeController;
     private CameraFade fadeController;
@@ -50,45 +51,18 @@ public class PlayerControls : MonoBehaviour {
 
         if (!moving)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if(!TryMovement(KeyCode.UpArrow, x=>x.forward))
             {
-                if (currentNode.forward != null)
+                if (!TryMovement(KeyCode.DownArrow, x => x.back))
                 {
-                    targetNode = currentNode.forward;
-                    moving = true;
-                    AudioController.Instance.PlayStepEffect();
+                    if (!TryMovement(KeyCode.LeftArrow, x => x.left))
+                    {
+                        if (!TryMovement(KeyCode.RightArrow, x => x.right))
+                        {
+
+                        }
+                    }
                 }
-                else camShakeController.shakeDuration = shakeDuration;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                if (currentNode.back != null)
-                {
-                    targetNode = currentNode.back;
-                    moving = true;
-                    AudioController.Instance.PlayStepEffect();
-                }
-                else camShakeController.shakeDuration = shakeDuration;
-            }
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                if (currentNode.left != null)
-                {
-                    targetNode = currentNode.left;
-                    moving = true;
-                    AudioController.Instance.PlayStepEffect();
-                }
-                else camShakeController.shakeDuration = shakeDuration;
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                if (currentNode.right != null)
-                {
-                    targetNode = currentNode.right;
-                    moving = true;
-                    AudioController.Instance.PlayStepEffect();
-                }
-                else camShakeController.shakeDuration = shakeDuration;
             }
         }
         else
@@ -98,6 +72,7 @@ public class PlayerControls : MonoBehaviour {
             {
                 moving = false;
                 transitionProgress = 0f;
+                trueProgress = 0;
                 transform.position = targetNode.transform.position;
                 currentNode = targetNode;
                 RenderSettings.fogDensity = 0.002f;
@@ -113,12 +88,40 @@ public class PlayerControls : MonoBehaviour {
                 transform.position = Vector3.Slerp(transform.position, targetNode.transform.position, transitionProgress);
 
                 //Fog update on transition
-                float trueProgress = (wholeTravelDistance - Vector3.Distance(transform.position, targetNode.transform.position)) / wholeTravelDistance;
+                float oldTrueProgress = trueProgress;
+                trueProgress = (wholeTravelDistance - Vector3.Distance(transform.position, targetNode.transform.position)) / wholeTravelDistance;
+                if (oldTrueProgress <= .5f && 0.5f < trueProgress)
+                {
+                    if (targetNode.halfWayAction != null)
+                    {
+                        targetNode.halfWayAction();
+                    }
+                }
                 RenderSettings.fogDensity = 0.002f + .02f * Mathf.Sin(trueProgress * Mathf.PI);
             }
         }
 
 
             cam.transform.LookAt(houseOrigin);
+    }
+
+    bool TryMovement(KeyCode key, System.Func<Node,Node> resolver)
+    {
+        if (Input.GetKeyDown(key))
+        {
+            Node possibleTarget = resolver(currentNode);
+            if (possibleTarget != null)
+            {
+                targetNode = possibleTarget;
+                moving = true;
+                AudioController.Instance.PlayStepEffect();
+                return true;
+            }
+            else
+            {
+                camShakeController.shakeDuration = shakeDuration;
+            }
+        }
+        return false;
     }
 }

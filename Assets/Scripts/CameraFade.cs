@@ -18,7 +18,9 @@ public class CameraFade : MonoBehaviour {
     public void SetFadedOut()
     {
         fadeAlpha = 1f;
-        fadeDirection = 1;
+        var c = fadeImage.color;
+        c.a = fadeAlpha;
+        fadeImage.color = c;
     }
 
     public void FadeIn()

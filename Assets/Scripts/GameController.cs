@@ -14,7 +14,6 @@ public class GameController : SingletonComponent<GameController> {
 
 
     public Image arrowImage;
-    public Text storyText;
     public Text locationDescriptionText;
     public CameraFade fadeController;
 
@@ -39,20 +38,23 @@ public class GameController : SingletonComponent<GameController> {
             switch (state)
             {
                 case GameState.INTRODUCTION:
-                    fadeController.FadeIn();
-                    StartCoroutine(ShowText("Vietnam, 1975.", 1f, false));
-                    StartCoroutine(ShowText("Rescue her.", 3f, true));
+                    AudioController.Instance.PlayTheme(ThemeType.HELICOPTER);
+                    fadeController.SetFadedOut();
+                    MakeAction(() => StartCoroutine(ShowText("Vietnam, 1975.", 3f)), 1f);
+                    MakeAction(() => StartCoroutine(ShowText("Find her in the <color=\"#E2CC52FF\">Tower</color>", 3f)), 5f);
+                    MakeAction(() => fadeController.FadeIn(), 7f);
+                    MakeAction(() => State = GameState.OUTSIDE, 7f);
                     break;
                 case GameState.OUTSIDE:
+                    AudioController.Instance.PlayTheme(ThemeType.RAIN);
                     arrowImage.enabled = false;
                     rainParticles.SetActive(true);
                     towerOuterShell.SetActive(true);
-                    //towerInnerShell.SetActive(false);
                     break;
                 case GameState.TOWER:
+                    AudioController.Instance.PlayTheme(ThemeType.RAIN_MUFFLED);
                     rainParticles.SetActive(false);
                     towerOuterShell.SetActive(false);
-                    //towerInnerShell.SetActive(true);
                     break;
                 case GameState.ASCENSION:
                     focusedPlayer.SetActive(false);
@@ -71,10 +73,10 @@ public class GameController : SingletonComponent<GameController> {
     {
         firstStepNode1.action = () => { State = GameState.OUTSIDE; };
         firstStepNode2.action = () => { State = GameState.OUTSIDE; };
-        towerEntranceNode.action = () => { State = GameState.OUTSIDE; };
-        firstTowerNode.action = () => { State = GameState.TOWER; };
+        towerEntranceNode.halfWayAction = () => { State = GameState.OUTSIDE; };
+        firstTowerNode.halfWayAction = () => { State = GameState.TOWER; };
         ascensionNode.action = () => { State = GameState.ASCENSION; };
-        State = GameState.INTRODUCTION;
+        State = GameState.OUTSIDE;
     }
 
     private void Update()
@@ -94,17 +96,21 @@ public class GameController : SingletonComponent<GameController> {
         }
     }
 
-    IEnumerator CallAction(System.Action action, float delay)
+    void MakeAction(System.Action action, float delay)
+    {
+        StartCoroutine(Delay(action, delay));
+    }
+
+    IEnumerator Delay(System.Action action, float delay)
     {
         yield return new WaitForSeconds(delay);
         action();
     }
 
-    IEnumerator ShowText(string text, float duration, bool isStoryText)
+    IEnumerator ShowText(string text, float duration)
     {
-            var textField = isStoryText ? storyText : locationDescriptionText;
-            textField.text = text;
+           locationDescriptionText.text = text;
             yield return new WaitForSeconds(duration);
-            textField.text = string.Empty;
+        locationDescriptionText.text = string.Empty;
     }
 }

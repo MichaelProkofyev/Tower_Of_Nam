@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ThemeType
+{
+    HELICOPTER,
+    RAIN,
+    RAIN_MUFFLED,
+    AMBIENT_ASCEND
+}
+
 public class AudioController : SingletonComponent<AudioController> {
 
-    public enum ThemeType
-    {
-        HELICOPTER,
-        RAIN,
-        RAIN_MUFFLED,
-        AMBIENT_ASCEND
-    }
 
     public AudioClip helicopterSound;
     public AudioClip rainSound;
@@ -20,14 +21,10 @@ public class AudioController : SingletonComponent<AudioController> {
     public AudioClip wetStepClip;
     public AudioClip[] dryStepClips;
 
-    AudioSource audioSource;
+    public AudioSource audioSource;
 
-    private void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
 
-    public void StartPlayingHelicopter(ThemeType themeType)
+    public void PlayTheme(ThemeType themeType)
     {
         audioSource.Stop();
         audioSource.loop = true;
@@ -48,6 +45,7 @@ public class AudioController : SingletonComponent<AudioController> {
             default:
                 break;
         }
+        audioSource.Play();
     }
 
     public void StopPlayingRain()

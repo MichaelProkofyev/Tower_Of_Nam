@@ -12,4 +12,5 @@ public class Node : MonoBehaviour {
     public bool lookAtY = true;
 
     public UnityEngine.Events.UnityAction action;
+    public UnityEngine.Events.UnityAction halfWayAction;
 }
