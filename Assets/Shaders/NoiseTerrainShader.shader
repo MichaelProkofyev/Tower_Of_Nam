@@ -36,7 +36,7 @@ Shader "Custom/NoiseTerrainShader" {
 
 		void vert(inout appdata_full v)
 		{
-			v.vertex.y += cnoise(v.vertex.xyz * _Time[0]/100) * _PullForce;
+			v.vertex.y += cnoise(v.vertex.xyz * _Time[0]/1) * _PullForce;
 			
 		}
 

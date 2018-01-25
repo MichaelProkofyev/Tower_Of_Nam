@@ -7,6 +7,7 @@ public enum ThemeType
     HELICOPTER,
     RAIN,
     RAIN_MUFFLED,
+    NOISE,
     AMBIENT_ASCEND
 }
 
@@ -16,6 +17,7 @@ public class AudioController : SingletonComponent<AudioController> {
     public AudioClip helicopterSound;
     public AudioClip rainSound;
     public AudioClip rainMuffledSound;
+    public AudioClip workNoise;
     public AudioClip ascendSound;
 
     public AudioClip wetStepClip;
@@ -39,6 +41,9 @@ public class AudioController : SingletonComponent<AudioController> {
             case ThemeType.RAIN_MUFFLED:
                 audioSource.clip = rainMuffledSound;
                 break;
+            case ThemeType.NOISE:
+                audioSource.clip = workNoise;
+                break;
             case ThemeType.AMBIENT_ASCEND:
                 audioSource.clip = ascendSound;
                 break;
@@ -46,11 +51,6 @@ public class AudioController : SingletonComponent<AudioController> {
                 break;
         }
         audioSource.Play();
-    }
-
-    public void StopPlayingRain()
-    {
-
     }
 
     public void PlayStepEffect()

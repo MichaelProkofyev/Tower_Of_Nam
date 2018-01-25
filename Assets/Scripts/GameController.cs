@@ -9,12 +9,15 @@ public class GameController : SingletonComponent<GameController> {
         INTRODUCTION,
         OUTSIDE,
         TOWER,
+        ROOM,
         ASCENSION
     }
 
 
     public Image arrowImage;
     public Text locationDescriptionText;
+    public GameObject girlObject;
+    public GameObject credits;
     public CameraFade fadeController;
 
     public GameObject rainParticles;
@@ -25,7 +28,8 @@ public class GameController : SingletonComponent<GameController> {
     public Node firstStepNode2;
     public Node towerEntranceNode;
     public Node firstTowerNode;
-    public Node ascensionNode;
+    public Node firstRoomNode;
+    public Node lastNode;
 
     public GameObject focusedPlayer;
     public GameObject fpsPlayer;
@@ -35,6 +39,8 @@ public class GameController : SingletonComponent<GameController> {
         set
         {
             state = value;
+            rainParticles.SetActive(false);
+            credits.SetActive(false);
             switch (state)
             {
                 case GameState.INTRODUCTION:
@@ -53,13 +59,29 @@ public class GameController : SingletonComponent<GameController> {
                     break;
                 case GameState.TOWER:
                     AudioController.Instance.PlayTheme(ThemeType.RAIN_MUFFLED);
-                    rainParticles.SetActive(false);
                     towerOuterShell.SetActive(false);
                     break;
+                case GameState.ROOM:
+                    AudioController.Instance.PlayTheme(ThemeType.NOISE);
+                    break;
                 case GameState.ASCENSION:
+                    girlObject.SetActive(false);
+                    AudioController.Instance.audioSource.Stop();
+                    fadeController.SetFadedOut();
                     focusedPlayer.SetActive(false);
                     fpsPlayer.SetActive(true);
-                    RenderSettings.fogDensity = 0.0005f;
+                    MakeAction(() =>
+                    {
+                        fadeController.FadeIn();
+                        AudioController.Instance.PlayTheme(ThemeType.AMBIENT_ASCEND);
+                    }
+                    , 2f);
+                    RenderSettings.fogDensity = 0.001f;
+                    MakeAction(() =>
+                    {
+                        credits.SetActive(true);
+                    }
+                    , 10f);
                     break;
                 default:
                     break;
@@ -75,7 +97,8 @@ public class GameController : SingletonComponent<GameController> {
         firstStepNode2.action = () => { State = GameState.OUTSIDE; };
         towerEntranceNode.halfWayAction = () => { State = GameState.OUTSIDE; };
         firstTowerNode.halfWayAction = () => { State = GameState.TOWER; };
-        ascensionNode.action = () => { State = GameState.ASCENSION; };
+        firstRoomNode.halfWayAction = () => { State = GameState.ROOM; };
+        lastNode.action = () => { State = GameState.ASCENSION; };
         State = GameState.OUTSIDE;
     }
 
