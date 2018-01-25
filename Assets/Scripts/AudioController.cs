@@ -5,7 +5,8 @@ using UnityEngine;
 public class AudioController : SingletonComponent<AudioController> {
 
 
-    public AudioClip stepClip;
+    public AudioClip wetStepClip;
+    public AudioClip[] dryStepClips;
 
     AudioSource audioSource;
 
@@ -14,8 +15,24 @@ public class AudioController : SingletonComponent<AudioController> {
         audioSource = GetComponent<AudioSource>();
     }
 
+    public void StopPlayingRain()
+    {
+
+    }
+
     public void PlayStepEffect()
     {
-        audioSource.PlayOneShot(stepClip);
+        switch (GameController.Instance.State)
+        {
+            case GameController.GameState.INTRODUCTION:
+            case GameController.GameState.OUTSIDE:
+                audioSource.PlayOneShot(wetStepClip);
+                break;
+            case GameController.GameState.TOWER:
+                audioSource.PlayOneShot(dryStepClips[Random.Range(0, dryStepClips.Length - 1)]);
+                break;
+            case GameController.GameState.ASCENSION:
+                break;
+        }
     }
 }

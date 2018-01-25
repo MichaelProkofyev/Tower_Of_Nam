@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class GameController : MonoBehaviour {
+public class GameController : SingletonComponent<GameController> {
 
-    enum GameState
+    public enum GameState
     {
         INTRODUCTION,
         OUTSIDE,
@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour {
     public GameObject focusedPlayer;
     public GameObject fpsPlayer;
 
-    private GameState State
+    public GameState State
     { get { return state; }
         set
         {
