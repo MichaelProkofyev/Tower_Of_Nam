@@ -77,4 +77,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PullPoint: {r: 61.7, g: 2.5999994, b: -51.099995, a: 0}
+    - _PullPoint: {r: -146.83, g: 102.3, b: -6.7, a: 0}

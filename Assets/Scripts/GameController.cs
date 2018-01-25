@@ -94,6 +94,12 @@ public class GameController : SingletonComponent<GameController> {
         }
     }
 
+    IEnumerator CallAction(System.Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action();
+    }
+
     IEnumerator ShowText(string text, float duration, bool isStoryText)
     {
             var textField = isStoryText ? storyText : locationDescriptionText;
