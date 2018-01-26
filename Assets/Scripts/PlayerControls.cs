@@ -144,6 +144,7 @@ public class PlayerControls : SingletonComponent<PlayerControls> {
                 audioSource.PlayOneShot(wetStepClip);
                 break;
             case GameController.GameState.TOWER:
+                audioSource.volume = .55f;
                 audioSource.PlayOneShot(dryStepClips[Random.Range(0, dryStepClips.Length - 1)]);
                 break;
             case GameController.GameState.ASCENSION:

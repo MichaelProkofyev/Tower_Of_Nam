@@ -67,7 +67,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PullForce: 0
+    - _PullForce: 0.3
     - _PullStartDistance: 3.93
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -77,4 +77,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PullPoint: {r: 68.55174, g: 205.18039, b: -23.188053, a: 0}
+    - _PullPoint: {r: 3.41, g: 559.4, b: -424.2, a: 0}

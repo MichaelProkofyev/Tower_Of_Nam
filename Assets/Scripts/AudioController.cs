@@ -44,7 +44,7 @@ public class AudioController : SingletonComponent<AudioController> {
                 doubleAudio.CrossFade(workNoise, 1, 5f);
                 break;
             case ThemeType.AMBIENT_ASCEND:
-                doubleAudio.CrossFade(ascendSound, 1, 3, 1f);
+                doubleAudio.CrossFade(ascendSound, .6f, 3, 1f);
                 break;
             default:
                 break;

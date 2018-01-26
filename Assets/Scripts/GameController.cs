@@ -78,8 +78,8 @@ public class GameController : SingletonComponent<GameController> {
                     girlObject.SetActive(false);
                     AudioController.Instance.StopAll();
                     fadeController.SetFadedOut();
-                    MakeAction(() => StartCoroutine(ShowText("Can't save them all", 4f)), 1f);
-                    MakeAction(() => StartCoroutine(ShowText("There are other worlds than these", 8f)), 6f);
+                    MakeAction(() => StartCoroutine(ShowText("Can't save them all", 3f)), 1f);
+                    MakeAction(() => StartCoroutine(ShowText("But there are other worlds than these", 8f)), 5f);
                     focusedPlayer.SetActive(false);
                     fpsPlayer.SetActive(true);
                     MakeAction(() =>
@@ -87,12 +87,12 @@ public class GameController : SingletonComponent<GameController> {
                         fadeController.FadeIn();
                         AudioController.Instance.PlayTheme(ThemeType.AMBIENT_ASCEND);
                     }
-                    , 2f);
+                    , 8f);
                     MakeAction(() =>
                     {
                         credits.SetActive(true);
                     }
-                    , 14f);
+                    , 20f);
                     break;
                 default:
                     break;
@@ -129,10 +129,6 @@ public class GameController : SingletonComponent<GameController> {
             case GameState.TOWER:
                 break;
             case GameState.ASCENSION:
-
-                fpsPlayer.transform.Rotate(Random.insideUnitSphere * rotationSpeed * Time.deltaTime);
-                fpsPlayer.transform.eulerAngles = new Vector3(Mathf.Clamp(fpsPlayer.transform.eulerAngles.x, -20f, 20f) , Mathf.Clamp(fpsPlayer.transform.eulerAngles.y, -20f, 20f), Mathf.Clamp(fpsPlayer.transform.eulerAngles.z, -20f, 20f));
-
                 if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Escape))
                 {
                     Application.Quit();
