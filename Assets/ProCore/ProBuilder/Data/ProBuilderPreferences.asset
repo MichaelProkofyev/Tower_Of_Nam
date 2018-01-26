@@ -15,6 +15,7 @@ MonoBehaviour:
   - pbIconGUI
   - pbEnableBackfaceSelection
   - pbDetachToNewObject
+  - pbUVMaterialPreview
   m_Int_keys:
   - pbDefaultEditLevel
   - pbDefaultSelectionMode
@@ -28,8 +29,8 @@ MonoBehaviour:
   - pbCurrentMaterialPalette
   m_Color_keys: []
   m_Material_keys: []
-  m_Bool_values: 010001
-  m_Int_values: 0000000002000000010000000000000002000000
+  m_Bool_values: 01000101
+  m_Int_values: 0100000002000000010000000000000002000000
   m_Float_values:
   - 0
   - 0
