@@ -55,10 +55,12 @@ public class GameController : SingletonComponent<GameController> {
                     AudioController.Instance.PlayTheme(ThemeType.RAIN);
                     arrowImage.enabled = false;
                     rainParticles.SetActive(true);
+                    towerInnerShell.SetActive(false);
                     towerOuterShell.SetActive(true);
                     break;
                 case GameState.TOWER:
                     AudioController.Instance.PlayTheme(ThemeType.RAIN_MUFFLED);
+                    towerInnerShell.SetActive(true);
                     towerOuterShell.SetActive(false);
                     break;
                 case GameState.ROOM:
@@ -95,7 +97,11 @@ public class GameController : SingletonComponent<GameController> {
     {
         firstStepNode1.action = () => { State = GameState.OUTSIDE; };
         firstStepNode2.action = () => { State = GameState.OUTSIDE; };
-        towerEntranceNode.halfWayAction = () => { State = GameState.OUTSIDE; };
+        towerEntranceNode.halfWayAction = () => {
+            State = GameState.OUTSIDE;
+            towerInnerShell.SetActive(true);
+            towerOuterShell.SetActive(true);
+        };
         firstTowerNode.halfWayAction = () => { State = GameState.TOWER; };
         firstRoomNode.halfWayAction = () => { State = GameState.ROOM; };
         lastNode.action = () => { State = GameState.ASCENSION; };
