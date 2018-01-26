@@ -20,32 +20,31 @@ public class AudioController : SingletonComponent<AudioController> {
     public AudioClip workNoise;
     public AudioClip ascendSound;
 
-    public AudioClip wetStepClip;
-    public AudioClip[] dryStepClips;
-
     public AudioSource audioSource;
+
+    public DoubleAudioSource doubleAudio;
 
 
     public void PlayTheme(ThemeType themeType)
     {
-        audioSource.Stop();
-        audioSource.loop = true;
+        //audioSource.Stop();
+        //audioSource.loop = true;
         switch (themeType)
         {
             case ThemeType.HELICOPTER:
-                audioSource.clip = helicopterSound;
+                doubleAudio.CrossFade(helicopterSound, 1, 1);
                 break;
             case ThemeType.RAIN:
-                audioSource.clip = rainSound;
+                doubleAudio.CrossFade(rainSound, 1, 1);
                 break;
             case ThemeType.RAIN_MUFFLED:
-                audioSource.clip = rainMuffledSound;
+                doubleAudio.CrossFade(rainMuffledSound, 1, 1);
                 break;
             case ThemeType.NOISE:
-                audioSource.clip = workNoise;
+                doubleAudio.CrossFade(workNoise, 1, 5f);
                 break;
             case ThemeType.AMBIENT_ASCEND:
-                audioSource.clip = ascendSound;
+                doubleAudio.CrossFade(ascendSound, 1, 3, 1f);
                 break;
             default:
                 break;
@@ -53,19 +52,8 @@ public class AudioController : SingletonComponent<AudioController> {
         audioSource.Play();
     }
 
-    public void PlayStepEffect()
+    public void StopAll()
     {
-        switch (GameController.Instance.State)
-        {
-            case GameController.GameState.INTRODUCTION:
-            case GameController.GameState.OUTSIDE:
-                audioSource.PlayOneShot(wetStepClip);
-                break;
-            case GameController.GameState.TOWER:
-                audioSource.PlayOneShot(dryStepClips[Random.Range(0, dryStepClips.Length - 1)]);
-                break;
-            case GameController.GameState.ASCENSION:
-                break;
-        }
+        doubleAudio.StopAll();
     }
 }

@@ -58,7 +58,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            RotateView();
+            
+            //if (Input.GetKey(KeyCode.DownArrow))
+            //{
+            //    transform.Rotate(Vector3.right * 10f * Time.deltaTime);
+            //}
+            //else
+            //{
+                RotateView();
+            //}
             // the jump state needs to read here to make sure it is not missed
            
         }

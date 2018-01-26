@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControls : MonoBehaviour {
+public class PlayerControls : SingletonComponent<PlayerControls> {
 
     public Transform houseOrigin;
 
@@ -20,8 +20,12 @@ public class PlayerControls : MonoBehaviour {
     private CameraShake camShakeController;
     private CameraFade fadeController;
 
-	// Use this for initialization
-	void Start () {
+    public AudioClip wetStepClip;
+    public AudioClip[] dryStepClips;
+    public AudioSource audioSource;
+
+    // Use this for initialization
+    void Start () {
         if (currentNode != null)
         {
             transform.position = currentNode.transform.position;
@@ -37,15 +41,15 @@ public class PlayerControls : MonoBehaviour {
 
         girlMat.SetVector("_PullPoint", transform.position);
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            fadeController.FadeIn();
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    fadeController.FadeIn();
 
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            fadeController.FadeOut();
-        }
+        //}
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    fadeController.FadeOut();
+        //}
 
 
 
@@ -107,14 +111,14 @@ public class PlayerControls : MonoBehaviour {
 
     bool TryMovement(KeyCode key, System.Func<Node,Node> resolver)
     {
-        if (Input.GetKeyDown(key))
+        if (Input.GetKeyDown(key) && GameController.Instance.canMove)
         {
             Node possibleTarget = resolver(currentNode);
             if (possibleTarget != null)
             {
                 targetNode = possibleTarget;
                 moving = true;
-                AudioController.Instance.PlayStepEffect();
+                PlayStepEffect();
                 return true;
             }
             else
@@ -123,5 +127,27 @@ public class PlayerControls : MonoBehaviour {
             }
         }
         return false;
+    }
+
+    public void SetDistanceGirlNoiseMult(float f)
+    {
+        girlMat.SetFloat("_DistanceMultiplier", f);
+
+    }
+
+    public void PlayStepEffect()
+    {
+        switch (GameController.Instance.State)
+        {
+            case GameController.GameState.INTRO:
+            case GameController.GameState.OUTSIDE:
+                audioSource.PlayOneShot(wetStepClip);
+                break;
+            case GameController.GameState.TOWER:
+                audioSource.PlayOneShot(dryStepClips[Random.Range(0, dryStepClips.Length - 1)]);
+                break;
+            case GameController.GameState.ASCENSION:
+                break;
+        }
     }
 }

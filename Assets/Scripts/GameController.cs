@@ -6,7 +6,7 @@ public class GameController : SingletonComponent<GameController> {
 
     public enum GameState
     {
-        INTRODUCTION,
+        INTRO,
         OUTSIDE,
         TOWER,
         ROOM,
@@ -24,15 +24,19 @@ public class GameController : SingletonComponent<GameController> {
     public GameObject towerOuterShell;
     public GameObject towerInnerShell;
 
-    public Node firstStepNode1;
-    public Node firstStepNode2;
+    public Node firstStepNode;
     public Node towerEntranceNode;
     public Node firstTowerNode;
     public Node firstRoomNode;
+    public Node halfwayRoomNode;
+    public Node lastStepsRoomNode;
     public Node lastNode;
+    public float rotationSpeed;
 
     public GameObject focusedPlayer;
     public GameObject fpsPlayer;
+
+    public bool canMove = false;
 
     public GameState State
     { get { return state; }
@@ -41,19 +45,23 @@ public class GameController : SingletonComponent<GameController> {
             state = value;
             rainParticles.SetActive(false);
             credits.SetActive(false);
+            canMove = true;
+            arrowImage.enabled = false;
+            RenderSettings.fogDensity = 0.002f;
             switch (state)
             {
-                case GameState.INTRODUCTION:
+                case GameState.INTRO:
                     AudioController.Instance.PlayTheme(ThemeType.HELICOPTER);
                     fadeController.SetFadedOut();
+                    canMove = false;
                     MakeAction(() => StartCoroutine(ShowText("Vietnam, 1975.", 3f)), 1f);
-                    MakeAction(() => StartCoroutine(ShowText("Find her in the <color=\"#E2CC52FF\">Tower</color>", 3f)), 5f);
-                    MakeAction(() => fadeController.FadeIn(), 7f);
-                    MakeAction(() => State = GameState.OUTSIDE, 7f);
+                    MakeAction(() => StartCoroutine(ShowText("Find her in <color=\"#E2CC52FF\">the tower</color>", 3f)), 5f);
+                    MakeAction(() => { arrowImage.enabled = true; canMove = true; }, 8f);
+                    
                     break;
                 case GameState.OUTSIDE:
+                    fadeController.FadeIn();
                     AudioController.Instance.PlayTheme(ThemeType.RAIN);
-                    arrowImage.enabled = false;
                     rainParticles.SetActive(true);
                     towerInnerShell.SetActive(false);
                     towerOuterShell.SetActive(true);
@@ -68,8 +76,10 @@ public class GameController : SingletonComponent<GameController> {
                     break;
                 case GameState.ASCENSION:
                     girlObject.SetActive(false);
-                    AudioController.Instance.audioSource.Stop();
+                    AudioController.Instance.StopAll();
                     fadeController.SetFadedOut();
+                    MakeAction(() => StartCoroutine(ShowText("Can't save them all", 4f)), 1f);
+                    MakeAction(() => StartCoroutine(ShowText("There are other worlds than these", 8f)), 6f);
                     focusedPlayer.SetActive(false);
                     fpsPlayer.SetActive(true);
                     MakeAction(() =>
@@ -78,12 +88,11 @@ public class GameController : SingletonComponent<GameController> {
                         AudioController.Instance.PlayTheme(ThemeType.AMBIENT_ASCEND);
                     }
                     , 2f);
-                    RenderSettings.fogDensity = 0.001f;
                     MakeAction(() =>
                     {
                         credits.SetActive(true);
                     }
-                    , 10f);
+                    , 14f);
                     break;
                 default:
                     break;
@@ -91,12 +100,11 @@ public class GameController : SingletonComponent<GameController> {
         }
     }
 
-    private GameState state;
+    public GameState state;
 
     void Start()
     {
-        firstStepNode1.action = () => { State = GameState.OUTSIDE; };
-        firstStepNode2.action = () => { State = GameState.OUTSIDE; };
+        firstStepNode.halfWayAction = () => { if(State != GameState.OUTSIDE) State = GameState.OUTSIDE; };
         towerEntranceNode.halfWayAction = () => {
             State = GameState.OUTSIDE;
             towerInnerShell.SetActive(true);
@@ -104,21 +112,31 @@ public class GameController : SingletonComponent<GameController> {
         };
         firstTowerNode.halfWayAction = () => { State = GameState.TOWER; };
         firstRoomNode.halfWayAction = () => { State = GameState.ROOM; };
+        halfwayRoomNode.halfWayAction = () => { PlayerControls.Instance.SetDistanceGirlNoiseMult(4); };
+        lastStepsRoomNode.halfWayAction = () => { PlayerControls.Instance.SetDistanceGirlNoiseMult(11); };
         lastNode.action = () => { State = GameState.ASCENSION; };
-        State = GameState.OUTSIDE;
+        State = GameState.INTRO;
     }
 
     private void Update()
     {
         switch (State)
         {
-            case GameState.INTRODUCTION:
+            case GameState.INTRO:
                 break;
             case GameState.OUTSIDE:
                 break;
             case GameState.TOWER:
                 break;
             case GameState.ASCENSION:
+
+                fpsPlayer.transform.Rotate(Random.insideUnitSphere * rotationSpeed * Time.deltaTime);
+                fpsPlayer.transform.eulerAngles = new Vector3(Mathf.Clamp(fpsPlayer.transform.eulerAngles.x, -20f, 20f) , Mathf.Clamp(fpsPlayer.transform.eulerAngles.y, -20f, 20f), Mathf.Clamp(fpsPlayer.transform.eulerAngles.z, -20f, 20f));
+
+                if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Escape))
+                {
+                    Application.Quit();
+                }
                 break;
             default:
                 break;
